@@ -55,8 +55,7 @@ const signup = async (req, res) => {
     nationality,
     passport_number,
     id_number,
-    phone_number
-  } = req.body;
+    phone_number  } = req.body;
   if (!req.file) return res.status(422).json({ message: "No Image Provided" });
   let existingUser;
   try {
