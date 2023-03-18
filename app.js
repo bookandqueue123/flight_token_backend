@@ -6,6 +6,7 @@ const axios = require("axios")
 const authRoutes = require("./routes/auth-routes");
 // const adminRoutes = require("./routes/admin-routes");
 // const discussionRoutes = require("./routes/discussion");
+const flightRoutes = require("./routes/flights-routes");
 const HttpError = require("./models/http-error");
 const Amadeus = require('amadeus');
 
@@ -33,6 +34,15 @@ const amadeus = new Amadeus({
     clientSecret: 'iA1cNoUbqAWDpzyS',
 });
 
+const options = {
+  method: 'GET',
+  url: 'https://aerodatabox.p.rapidapi.com/airports/%7BcodeType%7D/DME',
+  headers: {
+    'X-RapidAPI-Key': '70825555a8mshc0c2e29178aba67p15bdf5jsn81794c735890',
+    'X-RapidAPI-Host': 'aerodatabox.p.rapidapi.com'
+  }
+};
+
 // const data = new URLSearchParams( {
 //   grant_type: 'client_credentials',
 //   client_id: 'y5gN096ABuszGybR2rzlmm8duVvxOggq',  
@@ -52,6 +62,8 @@ const amadeus = new Amadeus({
 // }
 // getAmadeusKey()
 app.use(authRoutes);
+
+app.use('/api/bookings', flightRoutes)
 // app.use("/api/admin", adminRoutes.router);
 // app.use("/api/discussion", discussionRoutes.router);
 app.use(`/city-and-airport-search/:parameter`, (req, res) => {
