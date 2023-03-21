@@ -7,6 +7,7 @@ const authRoutes = require("./routes/auth-routes");
 // const adminRoutes = require("./routes/admin-routes");
 // const discussionRoutes = require("./routes/discussion");
 const flightRoutes = require("./routes/flights-routes");
+const usersRoutes = require("./routes/users-routes");
 const HttpError = require("./models/http-error");
 const Amadeus = require('amadeus');
 
