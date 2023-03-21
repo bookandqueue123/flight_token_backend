@@ -1,5 +1,6 @@
 const express = require("express");
 const { check } = require("express-validator");
+const passport = require("passport");
 //FOR THE USERS PROFILE
 
 const userController = require("../controller/users-controller");
@@ -8,7 +9,6 @@ const auth = require("../middleware/auth");
 const User = require("../models/users");
 const router = express.Router();
 
-router.post("/login", userController.login);
 
 //Displays information tailored according to the logged in user
 router.get('/profile', (req, res, next) => {
