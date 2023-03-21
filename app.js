@@ -34,14 +34,7 @@ const amadeus = new Amadeus({
     clientSecret: 'iA1cNoUbqAWDpzyS',
 });
 
-const options = {
-  method: 'GET',
-  url: 'https://aerodatabox.p.rapidapi.com/airports/%7BcodeType%7D/DME',
-  headers: {
-    'X-RapidAPI-Key': '70825555a8mshc0c2e29178aba67p15bdf5jsn81794c735890',
-    'X-RapidAPI-Host': 'aerodatabox.p.rapidapi.com'
-  }
-};
+
 
 // const data = new URLSearchParams( {
 //   grant_type: 'client_credentials',
