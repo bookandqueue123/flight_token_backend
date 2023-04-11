@@ -54,13 +54,13 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect("mongodb://localhost:27017/flight",
+  .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zchdj.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
     {
       useNewUrlParser: true,
       // maxPoolSize: 5,
     }
   ).then(() => {
-   app.listen(process.env.PORT || 8000);
+   app.listen(process.env.PORT || 5000);
     
   })
   .catch((err) => {
