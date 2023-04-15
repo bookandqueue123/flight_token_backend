@@ -202,7 +202,7 @@ const verifyEmail = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) return res.status(404).json({ message: "User not found" });
 
-  if (user.isVerified) res.json({ message: "User has already been verified" });
+  if (user.isVerified) return res.json({ message: "User has already been verified" });
   let token;
   try {
     token = await VerificationToken.findOne({ userId: user._id });
