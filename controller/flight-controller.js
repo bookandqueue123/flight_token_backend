@@ -4,6 +4,8 @@ const { validationResult } = require("express-validator");
 const HttpError = require("../models/http-error");
 
 const addFlight = async (req, res) => {
+  if (req.userData.role === "user")
+    return next(HttpError("You are unauthorized for this operation", 403));
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -27,12 +29,12 @@ const addFlight = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .json({ message: "Something went wrong, Please try again" , err:err});
+      .json({ message: "Something went wrong, Please try again", err: err });
   }
 };
 
 const getFlights = (req, res) => {
-  Flight.find()
+  Flight.find({})
     .then((flights) => {
       return res.status(200).json(flights);
     })
@@ -55,6 +57,8 @@ const searchFlight = (req, res) => {
 };
 
 const updateFlight = (req, res) => {
+  if (req.userData.role === "user")
+  return next(HttpError("You are unauthorized for this operation", 403));
   const { id } = req.params;
   Flight.findByIdAndUpdate(
     id,
@@ -77,6 +81,8 @@ const updateFlight = (req, res) => {
 };
 
 const deleteFlight = (req, res) => {
+  if (req.userData.role === "user")
+  return next(HttpError("You are unauthorized for this operation", 403));
   const { id } = req.params;
   Flight.findByIdAndDelete(id)
     .then((flight) => {
@@ -114,5 +120,5 @@ module.exports = {
   searchFlight,
   updateFlight,
   deleteFlight,
-  getFlight
+  getFlight,
 };

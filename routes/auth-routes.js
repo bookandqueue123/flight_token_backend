@@ -30,7 +30,12 @@ router.post(
 
       .matches(/^[A-Z]/)
       .withMessage("Password must start with an uppercase letter"),
-    check("fullname").not().isEmpty().withMessage("Fullname is required"),
+    check("fullname")
+      .not()
+      .isEmpty()
+      .withMessage("Fullname is required")
+      .matches(/^[a-zA-Z\s]+$/)
+      .withMessage("Fullname should contain only letters and spaces"),
     check("phone_number")
       .not()
       .isEmpty()
@@ -38,15 +43,18 @@ router.post(
       .isMobilePhone()
       .withMessage("Valid Phone Number is required"),
     check("nationality").not().isEmpty().withMessage("Nationality is required"),
-    check("id_number").not().isEmpty().withMessage("ID Number is required"),
+    check("id_number")
+      .not()
+      .isEmpty()
+      .withMessage("ID Number is required")
+      .matches(/^[0-9]+$/)
+      .withMessage("ID Number should contain only numbers"),
     check("passport_number")
       .not()
       .isEmpty()
       .withMessage("Passport Number is required")
       .matches(/^[A-Z]{1}[0-9]{7}$/)
-      .withMessage("Enter a valid passport number")
-
-      ,
+      .withMessage("Enter a valid passport number"),
   ],
   userController.signup
 );
@@ -65,12 +73,10 @@ router.post(
   userController.verifyEmail
 );
 
-
 router.post(
   "/upload-passport",
   fileUpload.uploadPassport,
   [
-
     check("email")
       .normalizeEmail()
       .isEmail()
@@ -82,8 +88,12 @@ router.post(
 router.post(
   "/set-pin",
   [
-    check("pin").not().isEmpty().withMessage("pin is required"),
-
+    check("pin")
+      .not()
+      .isEmpty()
+      .withMessage("pin is required")
+      .matches(/^[a-zA-Z0-9]+$/)
+      .withMessage("PIN cannot contain special characters"),
     check("email")
       .normalizeEmail()
       .isEmail()
@@ -107,19 +117,6 @@ router.post(
 router.post("/login", userController.login);
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // router.post(
 //   "/generate-phone-otp",
@@ -150,3 +147,12 @@ module.exports = router;
 //   ],
 
 //   userController.verifyPhoneOTP
+
+// .normalizeEmail()
+// .isEmail().withMessage("Enter a valid Email")
+// .custom((value) => {
+//   const domain = value.split('@')[1];
+//   if (!['gmail.com', 'yahoo.com'].includes(domain)) {
+//     throw new Error('Only Gmail and Yahoo emails are allowed');
+//   }
+//   return true;

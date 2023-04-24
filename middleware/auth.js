@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     if (!token) {
-      throw new Error("Authentication Failed!");
+      throw new Error("User is not authenticated!");
     }
     // try { jwt.verify(token, "your secret",  req.user = decode; return next(); // !important, you need this here to run. }); } catch (err) { return res.status(500).send({ message: err.message }); }
     jwt.verify(token, process.env.JWT_KEY, (err, decodedToken) => {
@@ -24,6 +24,6 @@ module.exports = (req, res, next) => {
     //   return res.status(403).json({ message: "Authorization Failed!" });
     // }
   } catch (err) {
-    return res.status(401).json({ message: "Authorization Failed" });
+    return res.status(401).json({ message: "User is not authenticated!" });
   }
 };

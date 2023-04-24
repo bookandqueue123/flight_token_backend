@@ -12,6 +12,7 @@ const HttpError = require("../models/http-error");
 const User = require("../models/users");
 const VerificationToken = require("../models/verificationToken");
 const ResetToken = require("../models/resetToken");
+const PassportNumber = require("../models/passport-number")
 dotenv.config();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -38,6 +39,16 @@ connection.once("open", () => {
   });
 });
 
+const checkIfUserExists = async (filter) => {
+  try {
+    const user = await User.findOne(filter);
+    return user !== null;
+  } catch (err) {
+    return true; // return true to indicate an error occurred
+  }
+}
+
+
 // Register New USER
 const signup = async (req, res) => {
   const errors = validationResult(req);
@@ -57,16 +68,27 @@ const signup = async (req, res) => {
     id_number,
     phone_number  } = req.body;
   if (!req.file) return res.status(422).json({ message: "No Image Provided" });
-  let existingUser;
-  try {
-    existingUser = await User.findOne({ email: email });
-  } catch (err) {
-    return res.status(500).json({ message: " Signing Up Failed" });
-  }
+  const emailExists = await checkIfUserExists({email});
+  const usernameExists = await checkIfUserExists({username});
+  const idExists = await checkIfUserExists({id_number});
+  const passportExist= await checkIfUserExists({passport_number});
+  if (emailExists) return res.status(422).json({ message: "User Already Exists" });
+  if (usernameExists) return res.status(422).json({ message: "Username Already Exists" });
+  if (idExists) return res.status(422).json({ message: "ID Number Already Exist" });
+  if (passportExist) return res.status(422).json({ message: "Passport Number Already Exists" });
 
-  if (existingUser) {
-    return res.status(422).json({ message: "User Already Exist" });
-  }
+
+
+  // try {
+  //   existingPassport = await PassportNumber.findOne({ number: passport_number });
+  // } catch (err) {
+  //   return res.status(500).json({ message: " Signing Up Failed" });
+  // }
+
+  
+  // if (existingPassport) {
+  //   return res.status(422).json({ message: "Passport Number already in used" });
+  // }
 
   const user = User({
     username,
