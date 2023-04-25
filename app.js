@@ -55,9 +55,11 @@ const amadeus = new Amadeus({
 //   console.log(response.data);
 // }
 // getAmadeusKey()
-app.use(authRoutes);
+app.use('/', authRoutes);
+
 
 app.use('/api/bookings', flightRoutes)
+app.use('/api/user-profile', usersRoutes)
 // app.use("/api/admin", adminRoutes.router);
 // app.use("/api/discussion", discussionRoutes.router);
 app.use(`/city-and-airport-search/:parameter`, (req, res) => {
@@ -89,17 +91,20 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "Unknown Error" });
 });
 
+mongoose.set('strictQuery', false);
 mongoose
   .connect(
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zchdj.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
+    // 'mongodb://127.0.0.1:27017/Flight-token',
     {
-      useNewUrlParser: true,
+      useNewUrlParser: true, useUnifiedTopology: true
       // maxPoolSize: 5,
     }
   ).then(() => {
    app.listen(process.env.PORT || 8000);
-    
+   console.log("connected to DB");
   })
   .catch((err) => {
     console.log(err);
   });
+  

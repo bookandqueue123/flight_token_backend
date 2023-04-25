@@ -45,7 +45,7 @@ const editProfile = async (req, res) => {
             email,
             fullname,
             phone_number,
-            nationality,
+            nationality
           },
         },
         { new: true }
