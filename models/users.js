@@ -63,7 +63,13 @@ const userSchema = new Schema({
     type: String,
     enum: ["pending", "confirmed"],
     
-  }
+  },
+  flights: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Flight",
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {
