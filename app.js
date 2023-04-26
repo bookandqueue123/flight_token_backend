@@ -8,6 +8,7 @@ const authRoutes = require("./routes/auth-routes");
 // const discussionRoutes = require("./routes/discussion");
 const flightRoutes = require("./routes/flights-routes");
 const usersRoutes = require("./routes/users-routes");
+const paymentRoutes = require('./routes/payment-routes');
 const HttpError = require("./models/http-error");
 const Amadeus = require('amadeus');
 
@@ -60,6 +61,7 @@ app.use('/', authRoutes);
 
 app.use('/api/bookings', flightRoutes)
 app.use('/api/user-profile', usersRoutes)
+app.use('/api/payment', paymentRoutes)
 // app.use("/api/admin", adminRoutes.router);
 // app.use("/api/discussion", discussionRoutes.router);
 app.use(`/city-and-airport-search/:parameter`, (req, res) => {
