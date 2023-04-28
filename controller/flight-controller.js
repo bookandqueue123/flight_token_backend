@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-const express = require("express");
-=======
 const Flight = require("../models/flight");
 const { validationResult } = require("express-validator");
 
@@ -125,4 +122,3 @@ module.exports = {
   deleteFlight,
   getFlight,
 };
->>>>>>> 73c711e42502390d27bb20fd22fed0b816c41d00
