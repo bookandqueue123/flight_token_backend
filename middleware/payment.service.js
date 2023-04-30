@@ -1,14 +1,14 @@
-const request = require('request');
+const axios = require('axios');
 const Payment = require('../models/Payment');
-const lodash = require('lodash');
+const _ = require('lodash');
 
-const {initializePayment, verifyPayment} = require('../util/payment')(request);
+const {initializePayment, verifyPayment} = require('../util/payment')(axios);
 
 class PaymentService{
     startPayment(data){
         return new Promise(async(resolve,reject)=>{
             try{
-                const form = lodash.pick(data, ['amount', 'email', 'full_name']);
+                const form = _.pick(data, ['amount', 'email', 'full_name']);
                 form.metadata = {
                     full_name: form.full_name
                 }

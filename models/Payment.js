@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const paymentShcema = new mongoose.Schema({
+const paymentSchema = new mongoose.Schema({
     full_name: {
         type: String,
         required: true,
