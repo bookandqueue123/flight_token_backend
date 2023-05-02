@@ -2,6 +2,9 @@ let Booking = require("../models/booking");
 let User = require("../models/users");
 let Flight = require("../models/flight");
 
+const PaymentService = require('../middleware/payment.service');
+const paymentInstance = new PaymentService();
+
 var customId = require("custom-id");
 
 const addNewBooking = async (req, res, next) => {
@@ -102,10 +105,48 @@ const getUserBookings = async (req, res, next) => {
   }
 };
 
+
+//Payments and co
+
+
+ const startPayment = async(req, res) => {
+    try{
+        const response = await paymentInstance.startPayment(req.body);
+        res.status(201).json({status: "Success", data: response});
+
+    }catch(err){
+        res.status(500).json({status: "failed", message: err.message});
+    }
+
+}
+const createPayment = async(req, res) => {
+    try{
+        const response = await paymentInstance.createPayment(req.body);
+        res.status(201).json({status: "Success", data: response});
+
+    }catch(err){
+        res.status(500).json({status: "failed", message: err.message});
+    }
+
+}
+const getPayment = async(req, res) => {
+    try{
+        const response = await paymentInstance.getPayment(req.body);
+        res.status(201).json({status: "Success", data: response});
+
+    }catch(err){
+        res.status(500).json({status: "failed", message: err.message});
+    }
+
+}
+
 module.exports = {
   addNewBooking,
   getAllBookings,
   getABooking,
   cancelBooking,
   getUserBookings,
+  startPayment,
+  createPayment,
+  getPayment
 };
