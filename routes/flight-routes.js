@@ -19,7 +19,8 @@ router.post(
 
     check("to").not().isEmpty().withMessage("destination is required"),
 
-    check("date").not().isEmpty().withMessage("date is required"),
+    check("departing").not().isEmpty().withMessage("departing date is required"),
+
     check("fare").not().isEmpty().withMessage("fare is required"),
   ],
   adminController.addFlight

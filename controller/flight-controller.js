@@ -1,7 +1,16 @@
 const Flight = require("../models/flight");
 const { validationResult } = require("express-validator");
+const dotenv = require("dotenv");
+const cloudinary = require("cloudinary").v2;
+const HttpError = require("../models/http-error"); 
+dotenv.config();
 
-const HttpError = require("../models/http-error");
+cloudinary.config({ 
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY
+});
+
 
 const addFlight = async (req, res) => {
   if (req.userData.role === "user")
@@ -12,15 +21,18 @@ const addFlight = async (req, res) => {
     const message = errors.errors[0].msg;
     return res.status(400).json({ message: message });
   }
-  const { airline, flightNumber, from, to, date, fare } = req.body;
-
+  const { airline, flightNumber, from, to, departing, returning, fare, } = req.body;
+  if (!req.file) return res.status(422).json({ message: "No Image Provided" });
+  const result = await cloudinary.uploader.upload(req.file.path, { folder: 'Flight-Token-flightImage' });
+  const image = result.secure_url;
   const newFlight = Flight({
     airline,
     flightNumber,
     from,
     to,
-    date,
+    departing, returning,
     fare,
+    image
   });
 
   try {
@@ -46,14 +58,32 @@ const getFlights = (req, res) => {
 };
 
 const searchFlight = (req, res) => {
-  const from = req.body.from;
-  const to = req.body.to;
-  const startDate = Date.parse(req.body.date);
-  const endDate = startDate + 24 * 60 * 60 * 1000;
-  Flight.find({ from, to, date: { $gte: startDate, $lt: endDate } })
-    .exec()
-    .then((flights) => res.status(200).json(flights))
-    .catch((err) => res.status(500).json("Error: " + err));
+  const { from, to, departing, returning, type } = req.body;
+  const departingDate = Date.parse(departing);
+  const returningDate = returning ? Date.parse(returning) : null;
+  const searchCriteria = {
+    from,
+    to,
+    departing: { $gte: departingDate },
+    ...(returningDate && { returning: { $lte: returningDate } }),
+  };
+
+  if (type === 'one-way') {
+    Flight.find(searchCriteria)
+      .exec()
+      .then((flights) => res.status(200).json(flights))
+      .catch((err) => res.status(500).json("Error: " + err));
+  } else {
+    Flight.find({ ...searchCriteria, returning: { $exists: true } })
+      .exec()
+      .then((flights) => {
+        const roundTripFlights = flights.filter((flight) => {
+          return Date.parse(flight.returning) >= returningDate;
+        });
+        res.status(200).json( roundTripFlights );
+      })
+      .catch((err) => res.status(500).json("Error: " + err));
+  }
 };
 
 const updateFlight = (req, res) => {

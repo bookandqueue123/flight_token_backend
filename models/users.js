@@ -25,7 +25,7 @@ const userSchema = new Schema({
     required: true,
   },
   image: {
-    type: Schema.Types.ObjectId,
+    type: String,
 
   },
   nationality: {
@@ -43,7 +43,7 @@ const userSchema = new Schema({
     required: true,
   },
   passportImage: {
-    type: Schema.Types.ObjectId,
+    type: String,
   },
   pin: {
     type: String,

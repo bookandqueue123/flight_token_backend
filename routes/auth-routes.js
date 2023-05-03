@@ -1,16 +1,22 @@
 const express = require("express");
 const { check } = require("express-validator");
 const fileUpload = require("../middleware/file-upload");
-
 const userController = require("../controller/auth-controller");
-const { isResetTokenValid } = require("../middleware/user");
 const auth = require("../middleware/auth");
+const multer = require("multer");
+const storage = multer.diskStorage({});
+const upload = multer({ storage , fileFilter: function(req, file, callback) {
+  if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+    return callback(new Error('Only image files are allowed!'));
+  }
+  callback(null, true);
+}})
 
 const router = express.Router();
 
 router.post(
   "/signup",
-  fileUpload.uploadImage,
+  upload.single("image"),
   [
     check("username").not().isEmpty().withMessage("Username is required"),
 
@@ -75,7 +81,7 @@ router.post(
 
 router.post(
   "/upload-passport",
-  fileUpload.uploadPassport,
+  upload.single("passport"),
   [
     check("email")
       .normalizeEmail()

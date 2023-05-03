@@ -1,24 +1,18 @@
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
-var Grid = require("gridfs-stream");
+const cloudinary = require("cloudinary").v2;
 const { isValidObjectId } = require("mongoose");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const crypto = require("crypto");
-const HttpError = require("../models/http-error");
-
 const User = require("../models/users");
 const VerificationToken = require("../models/verificationToken");
 const ResetToken = require("../models/resetToken");
-const PassportNumber = require("../models/passport-number")
 dotenv.config();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
 
-const connection = mongoose.connection;
 
 const {
   transporter,
@@ -29,22 +23,21 @@ const {
   generateOTP,
 } = require("../util/email");
 
-let gfs;
 
-let bucket;
-connection.once("open", () => {
-  bucket = new mongoose.mongo.GridFSBucket(connection, {
-    bucketName: "resources", // Override the default bucket name (fs)
-    chunkSizeBytes: 1048576, // Override the default chunk size (255KB)
-  });
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY
 });
+
 
 const checkIfUserExists = async (filter) => {
   try {
     const user = await User.findOne(filter);
     return user !== null;
   } catch (err) {
-    return true; // return true to indicate an error occurred
+    return true; 
   }
 }
 
@@ -68,6 +61,8 @@ const signup = async (req, res) => {
     id_number,
     phone_number  } = req.body;
   if (!req.file) return res.status(422).json({ message: "No Image Provided" });
+  // if (req.fileValidationError) return res.status(422).json({ message: req.fileValidationError });
+
   const emailExists = await checkIfUserExists({email});
   const usernameExists = await checkIfUserExists({username});
   const idExists = await checkIfUserExists({id_number});
@@ -77,19 +72,8 @@ const signup = async (req, res) => {
   if (idExists) return res.status(422).json({ message: "ID Number Already Exist" });
   if (passportExist) return res.status(422).json({ message: "Passport Number Already Exists" });
 
-
-
-  // try {
-  //   existingPassport = await PassportNumber.findOne({ number: passport_number });
-  // } catch (err) {
-  //   return res.status(500).json({ message: " Signing Up Failed" });
-  // }
-
-  
-  // if (existingPassport) {
-  //   return res.status(422).json({ message: "Passport Number already in used" });
-  // }
-
+  const result = await cloudinary.uploader.upload(req.file.path, { folder: 'Flight-Token-users' });
+  const image = result.secure_url;
   const user = User({
     username,
     email,
@@ -98,7 +82,7 @@ const signup = async (req, res) => {
     nationality,
     passport_number,
     id_number,
-    image: req.file.id,
+    image,
     phone_number
   });
 
@@ -265,9 +249,8 @@ const uploadPassport = async (req, res) => {
     const message = errors.errors[0].msg;
     return res.status(400).json({ message: message });
   }
-  const { email} = req.body;
   if (!req.file) return res.status(422).json({ message: "No Image Provided" });
-
+  const { email} = req.body;
   const user = await User.findOne({ email });
   if (!user) return res.status(404).json({ message: "User not found" });
   if (!user.isVerified)
@@ -276,11 +259,10 @@ const uploadPassport = async (req, res) => {
   if (req.fileValidationError) {
     return res.status(422).json({ message: req.fileValidationError });
   }
-  
- user.passportImage = req.file.id;
-  
+  const result = await cloudinary.uploader.upload(req.file.path, { folder: 'Flight-Token-passports' });
+  const image = result.secure_url;
+  user.passportImage = image;
   user.save();
-
   res.status(201).json({ message: "File Uploaded Sucessfully" });
 };
 
@@ -379,16 +361,6 @@ const setPin = async (req,res) => {
 //       );
 //     });
 // };
-
-
-
-
-
-
-
-
-
-
 
 
 
