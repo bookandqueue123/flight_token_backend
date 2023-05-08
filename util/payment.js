@@ -17,6 +17,25 @@ const paystack = (request) =>{
         request.post(options,callback);
 
     }
+    // const Paystack = require('paystack');
+    // const paystack = new Paystack('PAYSTACK_SECRET_KEY');
+    // const paymentData= {
+    //     //         url: 'https://api.paystack.co/transaction/initialize',
+        
+    // amount: 5000,
+    // email:"riliwanademola@yahoo.com",
+    // reference: "7PVGX8MEk85tgeEpVDtD",
+    // callback_url: 'https://api.paystack.co/transaction/initialize'
+
+
+    // };
+    // paystack.transaction.initialize(paymentData, (error, body) => {
+    //     if (error) {
+    //       console.error(error);
+    //     } else {
+    //       console.log(body.data.authorization_url);
+    //     }
+    //   });
 
     const verifyPayment = (ref,mycallback) => {
         const options = {

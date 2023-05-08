@@ -1,6 +1,7 @@
 const axios = require('axios');
 const Payment = require('../models/Payment');
 const _ = require('lodash');
+const paystack = require('paystack');
 
 const {initializePayment, verifyPayment} = require('../util/payment')(axios);
 

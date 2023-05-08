@@ -15,9 +15,11 @@ router.get('/', auth,bookingController.getAllBookings)
 router.get('/:bookingId', auth, bookingController.getABooking)
 router.delete('/:bookingId', auth, bookingController.cancelBooking) 
 
-router.post('/pay', bookingController.startPayment );
-router.post('/pay/createPayment', bookingController.createPayment );
-router.post('/pay/paymentDetails', bookingController.getPayment );
+// router.post('/pay', bookingController.startPayment );
+// router.post('/pay/createPayment', bookingController.createPayment );
+// router.post('/pay/paymentDetails', bookingController.getPayment );
+router.post("/pay/:billId",  auth, bookingController.pay )
+router.post("/webhook", bookingController.webhook )
 
 
 module.exports = router;

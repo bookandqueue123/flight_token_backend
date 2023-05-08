@@ -1,7 +1,9 @@
 let Booking = require("../models/booking");
 let User = require("../models/users");
 let Flight = require("../models/flight");
-
+let Bill = require("../models/Bill");
+const jwt = require("jsonwebtoken");
+const axios = require("axios");
 const PaymentService = require('../middleware/payment.service');
 const paymentInstance = new PaymentService();
 
@@ -109,35 +111,113 @@ const getUserBookings = async (req, res, next) => {
 //Payments and co
 
 
- const startPayment = async(req, res) => {
-    try{
-        const response = await paymentInstance.startPayment(req.body);
-        res.status(201).json({status: "Success", data: response});
+//  const startPayment = async(req, res) => {
+//     try{
+//         const response = await paymentInstance.startPayment(req.body);
+//         res.status(201).json({status: "Success", data: response});
 
-    }catch(err){
-        res.status(500).json({status: "failed", message: err.message});
-    }
+//     }catch(err){
+//         res.status(500).json({status: "failed", message: err.message});
+//     }
 
-}
-const createPayment = async(req, res) => {
-    try{
-        const response = await paymentInstance.createPayment(req.body);
-        res.status(201).json({status: "Success", data: response});
+// }
+// const createPayment = async(req, res) => {
+//     try{
+//         const response = await paymentInstance.createPayment(req.body);
+//         res.status(201).json({status: "Success", data: response});
 
-    }catch(err){
-        res.status(500).json({status: "failed", message: err.message});
-    }
+//     }catch(err){
+//         res.status(500).json({status: "failed", message: err.message});
+//     }
 
-}
-const getPayment = async(req, res) => {
-    try{
-        const response = await paymentInstance.getPayment(req.body);
-        res.status(201).json({status: "Success", data: response});
+// }
+// const getPayment = async(req, res) => {
+//     try{
+//         const response = await paymentInstance.getPayment(req.body);
+//         res.status(201).json({status: "Success", data: response});
 
-    }catch(err){
-        res.status(500).json({status: "failed", message: err.message});
-    }
+//     }catch(err){
+//         res.status(500).json({status: "failed", message: err.message});
+//     }
 
+// }
+// const pay = async (req, res) => {
+//   try {
+//     const { amount } = req.body;
+//     const user = await User.findById(req.userData.userId);
+//     if (!user) return res.status(404).json({ message: "No user found" });
+//     const bill = await Bill.findOne({
+//       _id: req.params.billId,
+//       individual: user._id,
+//     });
+//     if (!bill) return res.status(404).json({ message: "No bill found" });
+//     if (bill.status === "paid") return res.status(400).json({ error: "Bill has already been paid" })
+//         // Create Paystack payment request
+//     const { data } = await paystack.post("/transaction/initialize", {
+//       email: user.email,
+//       amount: amount * 100,
+//       metadata: {
+//         billId: bill.id,
+//       },
+//     });
+
+//     // Return payment URL to client
+//     res.json({ url: data.data.authorization_url });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+//};
+
+const paystack = axios.create({
+  baseURL: "https://api.paystack.co",
+  headers: {
+    Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+    "Content-Type": "application/json",
+  },
+});
+
+const pay = async (req, res) => {
+  try {
+    const { amount } = req.body;
+    const user = await User.findById(req.userData.userId);
+    if (!user) return res.status(404).json({ message: "No user found" });
+    const bill = await Bill.findOne({
+      _id: req.params.billId,
+      individual: user._id,
+    });
+    if (!bill) return res.status(404).json({ message: "No bill found" });
+    if (bill.status === "paid") return res.status(400).json({ error: "Bill has already been paid" })
+        // Create Paystack payment request
+    const { data } = await paystack.post("/transaction/initialize", {
+      email: user.email,
+      amount: amount * 100,
+      metadata: {
+        billId: bill.id,
+      },
+    });
+
+    // Return payment URL to client
+    res.json({ url: data.data.authorization_url });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const webhook = async (req, res) => {
+  console.log(req.body);
+  const secret = process.env.PAYSTACK_SECRET_KEY;
+  const hash = req.headers["x-paystack-signature"];
+  // Verify request signature
+  const hmac = crypto.createHmac("sha512", secret);
+  hmac.update(JSON.stringify(req.body));
+  const digest = hmac.digest("hex");
+  if (digest !== hash) {
+    console.error("Invalid webhook signature");
+    res.status(400).send("Invalid signature");
+    return;
+  }
 }
 
 module.exports = {
@@ -146,7 +226,6 @@ module.exports = {
   getABooking,
   cancelBooking,
   getUserBookings,
-  startPayment,
-  createPayment,
-  getPayment
+  pay,
+  webhook
 };

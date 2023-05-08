@@ -2,7 +2,7 @@
   "name": "flight-token",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "start": "node app.js",
     "server": "nodemon app.js",
@@ -31,8 +31,10 @@
     "mongoose": "^6.8.4",
     "multer": "^1.4.2",
     "multer-gridfs-storage": "^5.0.2",
+    "node-paystack": "^1.0.3",
     "nodemailer": "^6.9.0",
     "nodemon": "^2.0.20",
+    "paystack": "^2.0.1",
     "pdfkit": "^0.13.0",
     "socket.io": "^4.6.0",
     "twilio": "^4.8.0"
