@@ -5,6 +5,7 @@ const path = require("path");
 const paystack = require("paystack");
 const authRoutes = require("./routes/auth-routes");
 const adminRoutes = require("./routes/admin-routes");
+//const usersRoutes = require("./routes/users-routes");
 const flightRoutes = require("./routes/flight-routes");
 const bookingRoutes = require("./routes/booking-routes");
 
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 
 app.use(authRoutes);
 app.use("/api/admin",adminRoutes);
+//app.use("/api/users",usersRoutes);
 app.use("/api/flight",flightRoutes);
 app.use("/api/booking",bookingRoutes);
 

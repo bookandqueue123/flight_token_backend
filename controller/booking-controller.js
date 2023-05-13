@@ -179,21 +179,21 @@ const paystack = axios.create({
 
 const pay = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const { amount, flightId } = req.body;
     const user = await User.findById(req.userData.userId);
     if (!user) return res.status(404).json({ message: "No user found" });
-    const bill = await Bill.findOne({
-      _id: req.params.billId,
-      individual: user._id,
-    });
-    if (!bill) return res.status(404).json({ message: "No bill found" });
-    if (bill.status === "paid") return res.status(400).json({ error: "Bill has already been paid" })
+    // const bill = await Bill.findOne({
+    //   _id: req.params.billId,
+    //   individual: user._id,
+    // });
+    // if (!bill) return res.status(404).json({ message: "No bill found" });
+    // if (bill.status === "paid") return res.status(400).json({ error: "Bill has already been paid" })
         // Create Paystack payment request
     const { data } = await paystack.post("/transaction/initialize", {
       email: user.email,
       amount: amount * 100,
       metadata: {
-        billId: bill.id,
+        billId: flightId,
       },
     });
 
