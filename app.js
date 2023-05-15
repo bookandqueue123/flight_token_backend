@@ -1,4 +1,4 @@
-
+const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const path = require("path");
@@ -54,6 +54,7 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "Unknown Error" });
 });
 
+mongoose.set('strictQuery', false);
 mongoose
   .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zchdj.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
     {
