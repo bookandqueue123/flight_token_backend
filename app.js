@@ -1,4 +1,4 @@
-const express = require("express");
+
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const path = require("path");
@@ -7,9 +7,6 @@ const authRoutes = require("./routes/auth-routes");
 const adminRoutes = require("./routes/admin-routes");
 const flightRoutes = require("./routes/flight-routes");
 const bookingRoutes = require("./routes/booking-routes");
-
-
-
 
 
 const app = express();
