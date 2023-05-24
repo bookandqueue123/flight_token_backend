@@ -29,9 +29,9 @@ var flightSchema = new Schema({
     type: Number,
     required: true,
   },
-  image: {
+  fare: {
     type: String,
-  }
+  },
 
 }, { timestamps: true });
 

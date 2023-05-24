@@ -5,11 +5,6 @@ const cloudinary = require("cloudinary").v2;
 const HttpError = require("../models/http-error"); 
 dotenv.config();
 
-cloudinary.config({ 
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET_KEY
-});
 
 
 const addFlight = async (req, res) => {
@@ -21,10 +16,7 @@ const addFlight = async (req, res) => {
     const message = errors.errors[0].msg;
     return res.status(400).json({ message: message });
   }
-  const { airline, flightNumber, from, to, departing, returning, fare, } = req.body;
-  if (!req.file) return res.status(422).json({ message: "No Image Provided" });
-  const result = await cloudinary.uploader.upload(req.file.path, { folder: 'Flight-Token-flightImage' });
-  const image = result.secure_url;
+  const { airline, flightNumber, from, to, departing, returning, fare, type } = req.body;
   const newFlight = Flight({
     airline,
     flightNumber,
@@ -32,7 +24,7 @@ const addFlight = async (req, res) => {
     to,
     departing, returning,
     fare,
-    image
+    type
   });
 
   try {

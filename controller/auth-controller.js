@@ -12,8 +12,7 @@ dotenv.config();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
-
-
+const {getToken, sendRequest} = require("../util/validateIdentity")
 const {
   transporter,
   verifyEmailTemplate,
@@ -62,6 +61,9 @@ const signup = async (req, res) => {
     phone_number  } = req.body;
   if (!req.file) return res.status(422).json({ message: "No Image Provided" });
   // if (req.fileValidationError) return res.status(422).json({ message: req.fileValidationError });
+  // const token = await getToken()
+  // await sendRequest()
+  // console.log(token.access_token)
 
   const emailExists = await checkIfUserExists({email});
   const usernameExists = await checkIfUserExists({username});
@@ -86,6 +88,7 @@ const signup = async (req, res) => {
     phone_number
   });
 
+   
   user
     .save()
     .then((user) => {

@@ -32,7 +32,7 @@ const addNewBooking = async (req, res, next) => {
 
 const getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find().populate("flight").populate("user");
+    const bookings = await Booking.find({user:req.userData.userId}).populate("flight");
     return res.status(200).json(bookings);
   } catch (err) {
     console.log(err);
@@ -45,7 +45,7 @@ const getAllBookings = async (req, res) => {
 const getABooking = async (req, res, next) => {
   const { bookingId } = req.params;
   try {
-    const booking = await Booking.findById(bookingId);
+    const booking = await Booking.findById(bookingId).populate("flight");
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
@@ -79,7 +79,7 @@ const cancelBooking = async (req, res, next) => {
     const flight = await Flight.findById(flightId);
     user.flights.pull(flight);
     await user.save();
-    res.status(200).json({ success: "true" });
+    res.status(200).json(result);
   } catch (err) {
     console.log(err);
     return res
