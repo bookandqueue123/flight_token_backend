@@ -595,6 +595,9 @@ const editProfile = async (req, res) => {
     .json({ message: " Your profile has been sucessfully edited" });
 };
 
+//TO EDIT PROFILE
+//const editProfile
+
 module.exports = {
   signup,
   verifyEmail,

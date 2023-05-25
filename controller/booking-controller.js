@@ -4,8 +4,10 @@ let Flight = require("../models/flight");
 let Payment = require("../models/payment");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-
+const { v4: uuidv4 } = require('uuid');
 var customId = require("custom-id");
+
+
 
 const addNewBooking = async (req, res, next) => {
   const flightId = req.body.flightId;
@@ -152,6 +154,18 @@ const webhook = async (req, res) => {
   }
 }
 
+
+//to get the token
+
+const buyFlightToken = async (req,res) =>{
+
+}
+
+const exchangeTokens = async (req,res) =>{
+          //generate a token using uuidv4
+          const token = uuidv4();
+          await res.json({ token });
+}
 module.exports = {
   addNewBooking,
   getAllBookings,
@@ -159,5 +173,6 @@ module.exports = {
   cancelBooking,
   getUserBookings,
   pay,
-  webhook
+  webhook,
+  exchangeTokens
 };

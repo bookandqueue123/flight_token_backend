@@ -13,6 +13,7 @@ router.delete('/:bookingId', auth, bookingController.cancelBooking)
 
 router.post("/pay/:billId",  auth, bookingController.pay )
 router.post("/webhook", bookingController.webhook )
+router.get("/token", bookingController.exchangeTokens) 
 
 
 module.exports = router;
