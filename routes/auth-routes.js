@@ -122,6 +122,20 @@ router.post(
 
 router.post("/login", userController.login);
 
+//displays the users current profile
+
+// router.get("/profile/edit", async(req,res) =>{
+//   try{
+
+
+//   }catch(err){
+//     res.status().json({"unable to update"})
+//   }
+
+// });
+
+router.post("/profile/edit", userController.editProfile);
+
 module.exports = router;
 
 // router.post(

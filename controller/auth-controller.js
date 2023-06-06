@@ -195,6 +195,7 @@ const login = async (req, res, next) => {
   });
 };
 
+
 // Verification of Email
 const verifyEmail = async (req, res) => {
   const errors = validationResult(req);
